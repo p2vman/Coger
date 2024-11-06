@@ -18,7 +18,7 @@ class CogContext:
         else:
             self.meta = DynamicObject(meta)
 
-    def Rew(self, raw)
+    def Rew(self, raw):
         return CogContext(self.bot, raw, self.meta)
     def add(self, cog):
         self.bot.add_cog(cog)
@@ -28,8 +28,8 @@ class CogLoader:
     def __init__(self, bot):
         self.bot = bot
 
-    def load(self, dir_: str):
-        base_ctx = CogContext(self.bot, {})
+    def load(self, dir_: str, meta):
+        base_ctx = CogContext(self.bot, {}, meta)
 
         for filename in os.listdir(dir_):
             file_path = os.path.join(dir_, filename)
