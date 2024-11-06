@@ -33,7 +33,7 @@ class CogLoader:
 
         for filename in os.listdir(dir_):
             file_path = os.path.join(dir_, filename)
-            
+
             if filename.endswith("_c.py"):
                 self.load_cog_from_python(file_path, base_ctx)
             elif filename.endswith("cog.json"):
