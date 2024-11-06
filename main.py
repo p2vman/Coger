@@ -34,7 +34,9 @@ class CogLoader:
                         with open(json_filepath, 'r', encoding='utf-8') as f:
                             data = json.load(f)
                             for entry in data:
-                                ctx = base_ctx.Rew(entry['raw'])
+                                ctx = base_ctx
+                                if 'raw' in entry:
+                                    ctx = base_ctx.Rew(entry['raw'])
                                 if entry['name'] in func_dict and ('type' in entry and entry['type'] == 0):
                                     func_dict[entry['name']](ctx)
                                 elif entry['name'] in class_dict:
@@ -48,4 +50,54 @@ class CogLoader:
                         if filename[:-5] in class_dict:
                             class_dict[filename[:-5]](base_ctx).init(base_ctx)
                             continue
+                            
+            elif filemane.endswith("cog.json"):
+                with open(os.path.join(dir_, filename), 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                    for i in data:
+                        if os.path.exists(os.path.join(dir_, i)):
+                            vr = data[i]
+                            print(f"Load {vr['name']}")
+                            with open(os.path.join(dir_, i), 'r', encoding='utf-8') as file1:
+                                namespace = {}
+                                exec(file.read(), namespace)
+                                class_dict = {name: obj for name, obj in namespace.items() if isinstance(obj, type)}
+                                func_dict = {name: obj for name, obj in namespace.items() if callable(obj)}
 
+                                for entry in vr['entries']:
+                                    ctx = base_ctx
+                                    if 'raw' in entry:
+                                        ctx = base_ctx.Rew(entry['raw'])
+                                    if entry['name'] in func_dict and ('type' in entry and entry['type'] == 0):
+                                        func_dict[entry['name']](ctx)
+                                    elif entry['name'] in class_dict:
+                                        ins = class_dict[entry['name']](ctx)
+                                        if 'load' in entry and entry['load']:
+                                            ctx.add(ins)
+                                        ins.init(ctx)
+
+                                    
+
+                                    
+                                    
+
+                   
+
+
+
+                
+                {
+                    "cog.py": {
+                        "name": "cog",
+                        "entries": [
+                            {
+                                "name": "cogh",
+                                "load": False,
+                                "raw": {
+
+                                },
+                                "type": 0
+                            }
+                        ]
+                    }
+                }
