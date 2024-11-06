@@ -29,12 +29,18 @@ class CogLoader:
     def __init__(self, bot):
         self.bot = bot
         self.cog_list = []
-    
+
+    @staticmethod
+    def makeasemit(func):
+        func.emit = True
+        return func
+
     def emit(self, method : str, *args) -> None:
         for obj in self.cog_list:
             if hasattr(obj, method):
-                getattr(obj, method)(*args)
-
+                func = getattr(obj, method)
+                if hasattr(func, 'emit'):
+                    func(*args)
 
     def load(self, dir_: str, meta) -> None:
         base_ctx = CogContext(self.bot, {}, meta)
