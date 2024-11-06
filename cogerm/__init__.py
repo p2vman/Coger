@@ -20,6 +20,7 @@ class CogContext:
 
     def Rew(self, raw):
         return CogContext(self.bot, raw, self.meta)
+
     def add(self, cog):
         self.bot.add_cog(cog)
 
@@ -27,8 +28,15 @@ class CogContext:
 class CogLoader:
     def __init__(self, bot):
         self.bot = bot
+        self.cog_list = []
+    
+    def emit(self, method : str, *args) -> None:
+        for obj in self.cog_list:
+            if hasattr(obj, method):
+                getattr(obj, method)(*args)
 
-    def load(self, dir_: str, meta):
+
+    def load(self, dir_: str, meta) -> None:
         base_ctx = CogContext(self.bot, {}, meta)
 
         for filename in os.listdir(dir_):
@@ -77,6 +85,7 @@ class CogLoader:
                 func_dict[entry['name']](ctx)
             elif entry['name'] in class_dict:
                 ins = class_dict[entry['name']](ctx)
+                self.cog_list.append(ins)
                 if entry.get('load'):
                     ctx.add(ins)
                 ins.init(ctx)
