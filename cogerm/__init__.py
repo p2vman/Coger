@@ -2,6 +2,7 @@ import os
 import json
 import zipfile
 from io import TextIOWrapper
+import signal
 
 class DynamicObject:
     def __init__(self, attributes):
@@ -28,15 +29,25 @@ class CogContext:
 
 
 class CogLoader:
+
+    def handle_exit(self, signum, frame):
+        if not self.cls:
+            self.cls = True
+            self.close()
+
     def close(self):
         for obj in self.cog_list:
             if hasattr(obj, 'close'):
                 getattr(obj, 'close')()
 
 
-    def __init__(self, bot):
+    def __init__(self, bot, hook_exit : bool = False):
         self.bot = bot
         self.cog_list = []
+        self.cls = False
+        if hook_exit:
+            signal.signal(signal.SIGTERM, self.handle_exit)
+            signal.signal(signal.SIGINT, self.handle_exit)
 
     @staticmethod
     def makeasemit(func):
