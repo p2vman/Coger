@@ -28,6 +28,12 @@ class CogContext:
 
 
 class CogLoader:
+    def close(self):
+        for obj in self.cog_list:
+            if hasattr(obj, 'close'):
+                getattr(obj, 'close')()
+
+
     def __init__(self, bot):
         self.bot = bot
         self.cog_list = []
@@ -119,3 +125,4 @@ class CogLoader:
                 if entry.get('load'):
                     ctx.add(ins)
                 ins.init(ctx)
+                
